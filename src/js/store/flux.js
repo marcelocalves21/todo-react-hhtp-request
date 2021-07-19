@@ -3,16 +3,27 @@ const getState = ({ getStore, getActions, setStore }) => {
 		store: {
 			listTitle: "No Title",
 			todoList: [],
-			checkItem: "",
-			todos: []
+			checkItem: ""
 		},
 		actions: {
 			addTitle: title => (title === "" ? setStore({ listTitle: "No title" }) : setStore({ listTitle: title })),
 			getTodo: () => {
 				fetch("https://assets.breatheco.de/apis/fake/todos/user/marcelo")
 					.then(res => res.json())
-					.then(response => setStore({ todoList: response }));
+					.then(response => getStore(setStore({ todoList: response })));
 			},
+			addItem: newItem => {
+				fetch("https://assets.breatheco.de/apis/fake/todos/user/marcelo", {
+					method: "PUT",
+					body: JSON.stringify(newItem),
+					headers: {
+						"Content-Type": "application/json"
+					}
+				})
+					.then(res => res.json())
+					.then(() => getActions().getTodo());
+			},
+			updateItem: {},
 			deleteItem: element => {
 				fetch("https://assets.breatheco.de/apis/fake/todos/user/marcelo", {
 					method: "PUT",
@@ -24,10 +35,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 					.then(res => res.json())
 					.then(() => getActions().getTodo());
 			}
-			// addItem: newItem => {
-			// 	let newTodoList = getStore().todoList;
-			// 	setStore({ todoList: [...newTodoList, newItem] });
-			// },
 
 			// deleteList: () => {
 			// 	setStore({ todoList: [] });
