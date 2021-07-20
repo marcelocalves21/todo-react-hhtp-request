@@ -19,11 +19,17 @@ const getState = ({ getStore, getActions, setStore }) => {
 					headers: {
 						"Content-Type": "application/json"
 					}
-				})
-					.then(res => res.json())
-					.then(() => getActions().getTodo());
+				}).then(() => getActions().getTodo());
 			},
-			updateItem: {},
+			editItem: updateArr => {
+				fetch("https://assets.breatheco.de/apis/fake/todos/user/marcelo", {
+					method: "PUT",
+					body: JSON.stringify(updateArr),
+					headers: {
+						"Content-Type": "application/json"
+					}
+				}).then(() => getActions().getTodo());
+			},
 			deleteItem: element => {
 				fetch("https://assets.breatheco.de/apis/fake/todos/user/marcelo", {
 					method: "PUT",
@@ -31,9 +37,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					headers: {
 						"Content-Type": "application/json"
 					}
-				})
-					.then(res => res.json())
-					.then(() => getActions().getTodo());
+				}).then(() => getActions().getTodo());
 			}
 
 			// deleteList: () => {

@@ -4,6 +4,10 @@ import { Context } from "../store/appContext";
 export const Todo = () => {
 	const { store, actions } = useContext(Context);
 	const [todo, setTodo] = useState("");
+	const [edit, setEdit] = useState(false);
+	const [update, setUpdate] = useState("");
+	let position;
+
 	return (
 		<div className="container-fluid ">
 			<h1 className="text-center mt-3">
@@ -45,18 +49,42 @@ export const Todo = () => {
 												fontFamily: "Yomogi, cursive",
 												fontSize: "20px"
 											}}>
-											{index + 1} - {element.label}
+											{!edit ? (
+												`${index + 1} - ${element.label}`
+											) : (
+												<>
+													<input
+														placeholder={element.label}
+														onChange={el => setUpdate(el.target.value)}
+														value={update}
+													/>
+												</>
+											)}
 										</span>
 									</div>
-
 									<div className="col-1 ml-3 text-right">
-										<a className="mr-3" type="button" onClick={() => actions.updateItem()}>
-											<i className="far fa-edit" />
-										</a>
+										{!edit ? (
+											<a className="mr-3" type="button" onClick={() => setEdit(true)}>
+												<i className="far fa-edit" />
+											</a>
+										) : (
+											<a
+												className="mr-3"
+												type="button"
+												onClick={() => {
+													let updateItem = store.todoList;
+													updateItem[index] = { label: update, done: false };
+													actions.editItem(updateItem);
+													setEdit(false);
+													setUpdate("");
+												}}>
+												<i className="far fa-check-square" />
+											</a>
+										)}
 										<a
 											type="button"
 											onClick={() =>
-												actions.deleteItem(store.todoList.filter((e, i) => index !== i))
+												actions.deleteItem(store.todoList.filter(e => e !== element))
 											}>
 											<i className="fas fa-trash-alt" />
 										</a>
