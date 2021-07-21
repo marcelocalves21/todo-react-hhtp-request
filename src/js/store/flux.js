@@ -1,17 +1,21 @@
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
-			listTitle: ["marcelo", "marcelo2"],
+			listTitle: [],
 			activeTitle: "",
 			todoList: [],
 			checkItem: "",
 			response: true
 		},
 		actions: {
+			getUsers: () => {
+				fetch("https://assets.breatheco.de/apis/fake/todos/user/marceloapiusers")
+					.then(res => res.json())
+					.then(response => getStore(setStore({ listTitle: response })));
+			},
 			createUser: title => {
-				let newTitle = getStore().listTitle;
-
-				fetch(`https://assets.breatheco.de/apis/fake/todos/user/${title}`, {
+				let lowerCaseTitle = title.toLowerCase();
+				fetch(`https://assets.breatheco.de/apis/fake/todos/user/${lowerCaseTitle}`, {
 					method: "POST",
 					headers: {
 						"Content-Type": "application/json"
@@ -20,13 +24,29 @@ const getState = ({ getStore, getActions, setStore }) => {
 					redirect: "follow"
 				}).then(res => {
 					if (res.ok) {
-						getStore(setStore({ listTitle: [...newTitle, title] }));
-						getStore(setStore({ activeTitle: title }));
 						getStore(setStore({ response: true }));
+						getActions().addUser(lowerCaseTitle);
 					} else {
 						getStore(setStore({ response: false }));
 					}
 				});
+			},
+			addUser: user => {
+				let newUser = getStore().listTitle;
+				newUser = [...newUser, { label: user, done: false }];
+				fetch("https://assets.breatheco.de/apis/fake/todos/user/marceloapiusers", {
+					method: "PUT",
+					body: JSON.stringify(newUser),
+					headers: {
+						"Content-Type": "application/json"
+					}
+				})
+					.then(getStore(setStore({ activeTitle: user })))
+					.then(getActions().getTodo());
+			},
+			setActiveTitle: title => {
+				getStore(setStore({ activeTitle: title }));
+				getActions().getTodo();
 			},
 			getTodo: () => {
 				fetch(`https://assets.breatheco.de/apis/fake/todos/user/${getStore().activeTitle}`)
@@ -59,11 +79,23 @@ const getState = ({ getStore, getActions, setStore }) => {
 						"Content-Type": "application/json"
 					}
 				}).then(() => getActions().getTodo());
+			},
+			deleteList: user => {
+				fetch(`https://assets.breatheco.de/apis/fake/todos/user/${user}`, {
+					method: "DELETE"
+				});
+			},
+			updateUserslist: delUser => {
+				fetch(`https://assets.breatheco.de/apis/fake/todos/user/marceloapiusers`, {
+					method: "PUT",
+					body: JSON.stringify(delUser),
+					headers: {
+						"Content-Type": "application/json"
+					}
+				}).then(res => {
+					res.ok ? alert("User deleted") : alert("something went wrong");
+				});
 			}
-
-			// deleteList: () => {
-			// 	setStore({ todoList: [] });
-			// }
 		}
 	};
 };
