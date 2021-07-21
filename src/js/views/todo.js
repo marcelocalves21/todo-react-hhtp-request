@@ -6,7 +6,6 @@ export const Todo = () => {
 	const [todo, setTodo] = useState("");
 	const [edit, setEdit] = useState(false);
 	const [update, setUpdate] = useState("");
-	let position;
 
 	return (
 		<div className="container-fluid ">

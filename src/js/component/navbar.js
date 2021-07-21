@@ -11,9 +11,7 @@ export const Navbar = () => {
 			</Link>
 			<div className="ml-auto">
 				<Link to="/">
-					<button className="btn btn-primary" onClick={() => actions.deleteList()}>
-						Home
-					</button>
+					<button className="btn btn-primary">Home</button>
 				</Link>
 			</div>
 		</nav>
